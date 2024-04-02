@@ -9,9 +9,9 @@ Apache SSL 憑證申請安裝
 
 [TOC]
 
-:::info
-:bulb: 建立私鑰RSA 2048 、 產生憑證請求檔(CSR)、
-:::
+> [!NOTE]
+> 建立私鑰RSA 2048 、 產生憑證請求檔(CSR)、
+
 
 # 建立私鑰 Server.key
 
@@ -56,7 +56,7 @@ OpenSSL 會產生一個有密碼保護的RSA 私鑰檔案`server.key`，並使�
 Enter PEM pass phrase:
 Verifying password - Enter PEM pass phrase:
 ```
-以後使用私鑰時都會需要輸入。
+以後使用私鑰時都會需要輸入。\
 ![image](https://hackmd.io/_uploads/H1PWsewpa.png)
 
 
@@ -110,21 +110,21 @@ Certificate Request:
 # 將certrequest.txt 送至證書頒發機構(CA)
 依照證書頒發機構填寫 個人/公司/法人 資料
 如中華電信:
-![image](https://hackmd.io/_uploads/BkHRjew6p.png)
+![image](https://hackmd.io/_uploads/BkHRjew6p.png)\
 Reference: https://publicca.hinet.net/documents.htm 
 
 # 根憑證/中繼憑證 安裝設定 
-:::info
-在取得CA認證的Public CA 簽發憑證後
-:::
+> [!TIP]
+> 在取得CA認證的Public CA 簽發憑證後
+
 ## 取得eCA自簽憑證 (根憑證 ROOTeCA)
 
-中華電信公開金鑰基礎建設: [中華電信自簽憑證](http://epki.com.tw/download/ROOTeCA_64.crt)
+中華電信公開金鑰基礎建設:\ [中華電信自簽憑證](http://epki.com.tw/download/ROOTeCA_64.crt)
 
 ![image](https://hackmd.io/_uploads/ry6ECO6pa.png)
 
 ## 取得Public CA 憑證鏈 (中繼CA憑證)
-中華電信公開金鑰基礎建設: [中華電信自身通用憑證](http://epki.com.tw/download/PublicCA2_64.crt)
+中華電信公開金鑰基礎建設: [中華電信自身通用憑證](http://epki.com.tw/download/PublicCA2_64.crt)\
 ![image](https://hackmd.io/_uploads/H1b4ktpaa.png)
 
 ## 匯出 ROOTeCA(根憑證) & Public CA(中繼CA憑證)
