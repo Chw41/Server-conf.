@@ -9,7 +9,7 @@ Apache SSL 憑證申請安裝
 
 [TOC]
 
-> [!NOTE]
+>[!Tip]
 > 建立私鑰RSA 2048 、 產生憑證請求檔(CSR)、
 
 
