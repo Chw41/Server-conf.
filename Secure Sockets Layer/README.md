@@ -271,7 +271,7 @@ SSLCertificateFile "conf/ssl.crt/yougood-server.crt"
 
 ### 3.1 編輯 ssl.conf 中的 SSLCertificateKeyFile
  >[!Note]
-將步驟 [**1. 產生RSA 私鑰**](https://hackmd.io/@CHW/Skyhc1v6T#1-%E7%94%A2%E7%94%9FRSA-%E7%A7%81%E9%91%B0) 產生的server.key複製到/apache/conf/ssl.key下
+將步驟 [**1. 產生RSA 私鑰**](#1-%E7%94%A2%E7%94%9Frsa-%E7%A7%81%E9%91%B0) 產生的server.key複製到/apache/conf/ssl.key下
 
 編輯 httpd-ssl.conf 設定檔
 ```command
