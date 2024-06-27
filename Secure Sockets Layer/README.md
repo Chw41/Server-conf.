@@ -46,9 +46,9 @@ openssl version
 ```command
 openssl genrsa -des3 -out server.key 2048
 ```
-> `genrsa`: 表示產生RSA 金鑰的操作。
-> `-des3`: 表示使用3DES 加密演算法對產生的私密金鑰進行加密，並要求使用者輸入密碼來保護私密金鑰。
-> `-out server.key`: 指定產生的私鑰的輸出檔名為 server.key
+> `genrsa`: 表示產生RSA 金鑰的操作\
+> `-des3`: 表示使用3DES 加密演算法對產生的私密金鑰進行加密，並要求使用者輸入密碼來保護私密金鑰\
+> `-out server.key`: 指定產生的私鑰的輸出檔名為 server.key\
 > `2048`: 指定產生的RSA 金鑰的長度為2048 位元。 #國際密碼學規範需使用2048bits以上金鑰
 
 OpenSSL 會產生一個有密碼保護的RSA 私鑰檔案`server.key`，並使用3DES 演算法對私鑰進行加密。產生金鑰後會要求輸入密碼(PEM pass phase)
@@ -65,10 +65,10 @@ Verifying password - Enter PEM pass phrase:
 ```command
 openssl req -new -key server.key -out certrequest.txt
 ```
-> `openssl`: OpenSSL 工具的命令列工具。
-`req`: 表示產生憑證簽發要求的操作。
-`-new`: 表示建立一個新的憑證要求。
-`-key server.key`: 指定私鑰檔案server.key用於產生憑證請求。
+> `openssl`: OpenSSL 工具的命令列工具。\
+`req`: 表示產生憑證簽發要求的操作。\
+`-new`: 表示建立一個新的憑證要求。\
+`-key server.key`: 指定私鑰檔案server.key用於產生憑證請求。\
 `-out certrequest.txt`: 指定產生的憑證要求的輸出檔案名稱certrequest.txt。
 
 產出過程中需要進行身分驗證:
@@ -114,7 +114,7 @@ Certificate Request:
 Reference: https://publicca.hinet.net/documents.htm 
 
 # 根憑證/中繼憑證 安裝設定 
-> [!TIP]
+>[!Note]
 > 在取得CA認證的Public CA 簽發憑證後
 
 ## 取得eCA自簽憑證 (根憑證 ROOTeCA)
@@ -138,7 +138,7 @@ Reference: https://publicca.hinet.net/documents.htm
 
 ### 3. 匯出格式設定
 ![image](https://hackmd.io/_uploads/Bk5a-YTTp.png)
-> 選擇 :red_circle:  密碼編譯訊息語法標準- PKCS #7 憑證 (.P7B)
+> 選擇 :red_circle:  密碼編譯訊息語法標準- PKCS #7 憑證 (.P7B)\
 > 勾選 :ballot_box_with_check: 如果可能的話，包含憑證路徑中的所有憑證
 
 ### 4. 另存 .P7B 檔
@@ -164,11 +164,11 @@ Reference: https://publicca.hinet.net/documents.htm
 ```command
 openssl pkcs7 -in eCA_PublicCA.p7b -inform DER -print_certs -out eCA_PublicCA.pem
 ```
-> `openssl`: OpenSSL 工具的命令列工具。
-`pkcs7`: 表示PKCS#7 相關操作。
-`-in eCA_PublicCA.p7b`: 指定輸入的PKCS#7 檔案名為eCA_PublicCA.p7A。
-`-inform DER`: 指定輸入檔的格式為DER 格式。PKCS#7 檔案可以以DER 或PEM 格式儲存。
-`-print_certs`: 指示輸出列印PKCS#7 檔案中所包含的憑證。
+> `openssl`: OpenSSL 工具的命令列工具。\
+`pkcs7`: 表示PKCS#7 相關操作。\
+`-in eCA_PublicCA.p7b`: 指定輸入的PKCS#7 檔案名為eCA_PublicCA.p7A。\
+`-inform DER`: 指定輸入檔的格式為DER 格式。PKCS#7 檔案可以以DER 或PEM 格式儲存。\
+`-print_certs`: 指示輸出列印PKCS#7 檔案中所包含的憑證。\
 `-out eCA_PublicCA.pem`: 指定輸出檔案的檔案名為eCA_PublicCA.pem，並將憑證以PEM 格式儲存。
 
 ![image](https://hackmd.io/_uploads/SJcadKp6T.png)
@@ -206,20 +206,20 @@ SSLCertificateChainFile "/conf/ssl.crt/yougood-ca.crt"
 
 # SSL伺服器憑證安裝
 ## 1. server.cer格式轉換
-:::warning
-**若收到的CA簽發的cer檔為PEM encode，則可忽略此步驟1。**
-驗證方式: 使用文字編輯器開啟cer檔
-1.顯示亂碼: DER encode
-2.顯示BEGIN CERTIFICATE開頭: PEM encode
-:::
+>[!Warning]
+>**若收到的CA簽發的cer檔為PEM encode，則可忽略此步驟1。**\
+>驗證方式: 使用文字編輯器開啟cer檔\
+>1.顯示亂碼: DER encode\
+>2.顯示BEGIN CERTIFICATE開頭: PEM encode
+
 原憑證(.cer)為DER encode，需要轉換成PEM encode (Base64)
 ```command
 openssl x509 -in server.cer -inform DER -out server.pem
 ```
-> `openssl`: OpenSSL 工具的命令列工具。
-`x509`: 表示X.509 相關操作。
-`-in server.cer`: 指定輸入的X.509 憑證檔案名稱server.cer。
-`-inform DER`: 指定輸入檔的格式為DER 編碼。X.509 憑證可以以DER 或PEM 格式儲存。
+> `openssl`: OpenSSL 工具的命令列工具。\
+`x509`: 表示X.509 相關操作。\
+`-in server.cer`: 指定輸入的X.509 憑證檔案名稱server.cer。\
+`-inform DER`: 指定輸入檔的格式為DER 編碼。X.509 憑證可以以DER 或PEM 格式儲存。\
 `-out server.pem`: 指定輸出檔案的檔案名為server.pem，並將憑證以PEM 格式儲存。
 
 ## 2. 將產出的.cer/.PEM 憑證移置/apache/conf/ssl.crt
@@ -270,9 +270,9 @@ SSLCertificateFile "conf/ssl.crt/yougood-server.crt"
 > 將SSLCertificateFile編輯成上步驟產出的SERVER.CRT路徑
 
 ### 3.1 編輯 ssl.conf 中的 SSLCertificateKeyFile
-:::info
+ >[!Note]
 將步驟 [**1. 產生RSA 私鑰**](https://hackmd.io/@CHW/Skyhc1v6T#1-%E7%94%A2%E7%94%9FRSA-%E7%A7%81%E9%91%B0) 產生的server.key複製到/apache/conf/ssl.key下
-:::
+
 編輯 httpd-ssl.conf 設定檔
 ```command
 vi ~apache/conf/extra/httpd-ssl.conf
@@ -292,8 +292,8 @@ SSLCertificateKeyFile "conf/ssl.key/yougood-server.key"
 ```
 > 將SSLCertificateKeyFile 編輯成匯入的SERVER.KEY路徑
 
-:::danger
-若伺服器無法重啟遇到以下相關ERROR，無法重啟:
+>[!Caution]
+>若伺服器無法重啟遇到以下相關ERROR，無法重啟:\
 AH02577: Init: SSLPassPhraseDialog builtin is not supported on Win32 (key file C:/xampp/apache/conf/ssl.key/yougood-server.key)
 AH02311: Fatal error initialising mod_ssl, exiting. See C:/xampp/apache/logs/error.log for more information
 AH02564: Failed to configure encrypted (?) private key www.example.com:443:0, check C:/xampp/apache/conf/ssl.key/yougood-server.key
@@ -306,7 +306,7 @@ SSL Library Error: error:0688010A:asn1 encoding routines::nested asn1 error (Fie
 SSL Library Error: error:1E08010C:DECODER routines::unsupported (No supported data to decode.  Input type: DER, Input structure: type-specific)
 SSL Library Error: error:0688010A:asn1 encoding routines::nested asn1 error (Type=RSAPrivateKey)
 SSL Library Error: error:0688010A:asn1 encoding routines::nested asn1 error (Type=PKCS8_PRIV_KEY_INFO) 
-:::
+
 可能是 SSL 金鑰格式錯誤。先確保SSL金鑰檔案是正確的PEM 格式，並且密碼pass phrase正確。
 可使用以下command，轉換key格式 (DER > PEM)
 ```
