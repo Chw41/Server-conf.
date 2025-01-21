@@ -55,8 +55,8 @@ docker-compose up
 # 初始設定
 瀏覽 http://localhost:5601/ \
 ![image](https://hackmd.io/_uploads/S100-_wca.png)
-> 預設帳號密碼:
-> elastic
+> 預設帳號密碼:\
+> elastic\
 > changeme
 
 ![image](https://hackmd.io/_uploads/H1fQGdv56.png)
