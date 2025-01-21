@@ -48,12 +48,12 @@ docker-compose up
 在Docker Desktop可以看到Elasticsearch、Logstash、Kibana都裝好了
 ![image](https://hackmd.io/_uploads/BJ4mbuDca.png)
 
-:::success
-:bulb: 完成後，在Kibana介面上建立index-pattern & 視覺化
-:::
+> [!TIP]
+> :bulb: 完成後，在Kibana介面上建立index-pattern & 視覺化
+
 
 # 初始設定
-瀏覽 http://localhost:5601/
+瀏覽 http://localhost:5601/ \
 ![image](https://hackmd.io/_uploads/S100-_wca.png)
 > 預設帳號密碼:
 > elastic
