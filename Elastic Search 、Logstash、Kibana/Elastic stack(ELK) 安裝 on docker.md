@@ -84,7 +84,7 @@ docker-compose exec elasticsearch bin/elasticsearch-reset-password --batch --use
 ![image](https://hackmd.io/_uploads/BJXVV_vqp.png)
 > New value: YapaMJlVP+fMYvKnoR62 
 
-● 更新.env password
+● 更新.env password\
 雖然這個密碼在核心套件中沒有被使用，但是一些擴展（可能是指套件或其他應用程式）需要它來連接到Elasticsearch。
 ![image](https://hackmd.io/_uploads/H1neYdv9a.png)
 
@@ -99,7 +99,139 @@ docker-compose up -d logstash kibana
 >Logstash 配置在 logstash/config/logstash.yml\
 >Kibana 配置在 kibana/config/kibana.yml
 
-# Reference:
+# 設定區網固定 IP
+>[!Note]
+>Environment: 在 Mac 使用 Wireguard\
+>將 ELK 架在 172.27.71.7 為例：
+## 編輯 docker-compose.yml
+```
+services:
+
+  elasticsearch:
+    ...
+    ports:
+      - "172.27.71.7:9200:9200"
+      - "172.27.71.7:9300:9300"
+    ...
+    networks:
+      elk:
+        ipv4_address: 172.27.71.7
+    ...
+
+  logstash:
+    ...
+    ports:
+      - "172.27.71.7:5044:5044"
+      - "172.27.71.7:50000:50000/tcp"
+      - "172.27.71.7:50000:50000/udp"
+      - "172.27.71.7:9600:9600"
+    ...
+    networks:
+      elk:
+        ipv4_address: 172.27.71.8
+    ...
+
+  kibana:
+    ...
+    ports:
+      - "172.27.71.7:5601:5601"
+    ...
+    networks:
+      elk:
+        ipv4_address: 172.27.71.9
+    ...
+
+networks:
+  elk:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "172.27.71.0/24"
+          gateway: "172.27.71.1"
+```
+> 1. 將 ELK 服務指定到 172.27.71.7
+> 2. 自訂 dcker networks
+> > 命名： elk
+> > 設定子網域
+>
+> 3. ELK 分別自定靜態 IP (`172.27.71.7`, `172.27.71.8`, `172.27.71.9`)，避免 Docker 分配動態 IP 導致 VPN 無法識別
+
+- 重啟 container
+```
+docker-compose down && docker-compose up -d
+```
+
+
+## 設定 VPN
+1. 安裝 wireguard-tools
+```
+$ brew install wireguard-tools
+```
+>[!Note]
+> 若已安裝 Ｗireguard APP，仍需要安裝 wireguard-tools\
+> 且 GUI 與 CLI 設定不會同步 :face_with_finger_covering_closed_lips: \
+> **App Store 上的 WireGuard App 與你在 Terminal 安裝的 wireguard-tools 是 不同的工具** 
+2. 建立 wireguard conf
+```
+[Interface]
+Address = 172.27.71.7/24
+PrivateKey = <你的私鑰>
+DNS = 8.8.8.8, 1.1.1.1
+ListenPort = 51820
+
+[Peer]
+PublicKey = <對方的公鑰>
+AllowedIPs = 172.27.71.4/32
+Endpoint = <對方的公網IP>:51820
+```
+
+3. 簡化設定檔、啟動 VPN
+```
+$ sudo mv {wireguard conf} /opt/homebrew/etc/wireguard/wg0.conf
+$ sudo wg-quick up wg0
+Password:
+Warning: `/opt/homebrew/etc/wireguard/wg0.conf' is world accessible
+[+] Interface for wg0 is utun10
+wg-quick: `wg0' already exists as `{interface}'
+```
+
+4. 確認 VPN 狀態
+```
+$ sudo wg show
+interface: {interface}
+  public key: {public key}
+  private key: (hidden)
+  listening port: 51421
+
+peer: y4IWe9FjQ1iJg5Ep6YekzmAqUCDXiSRW62X92qzK7HY=
+  endpoint: {對方的公網IP}:48763
+  allowed ips: 172.27.71.0/24
+  latest handshake: 7 seconds ago
+  transfer: 2.28 MiB received, 2.44 MiB sent
+  persistent keepalive: every 25 seconds
+```
+互相 ping 連線測試
+```
+$ ping 172.27.71.7
+PING 172.27.71.7 (172.27.71.7): 56 data bytes
+64 bytes from 172.27.71.7: icmp_seq=0 ttl=63 time=344.646 ms
+64 bytes from 172.27.71.7: icmp_seq=1 ttl=63 time=327.920 ms
+64 bytes from 172.27.71.7: icmp_seq=2 ttl=63 time=331.835 ms
+64 bytes from 172.27.71.7: icmp_seq=3 ttl=63 time=331.821 ms
+```
+>[!important]
+> 若 ping 不到，檢查防火牆設定\
+> `sudo pfctl -sr`
+5. 重啟 VPN 更新設定
+```
+sudo wg-quick down wg0
+sudo wg-quick up wg0
+```
+瀏覽 http://172.27.71.7:5601/\
+![image](https://hackmd.io/_uploads/H1rwqPvOJl.png)
+
+
+# Reference
 https://github.com/deviantony/docker-elk
 
 ###### tags: `ELK` `Elasticsearch` `Logstash` `Kibana`
