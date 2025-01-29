@@ -14,7 +14,11 @@ Elastic stack(ELK) 安裝與教學
 
 
 # ELK 介紹
-
+>[!Important]
+>**資料來源 → Logstash → Elasticsearch → Kibana**\
+Logstash 收集並處理資料。\
+將處理好的資料送入 Elasticsearch 進行儲存和索引。\
+Kibana 從 Elasticsearch 獲取資料，進行可視化和分析。
 
 ● **Elasticsearch**：
 Elasticsearch為分散式、RESTful 的搜尋及分析的搜尋引擎，能解決與日俱增的使用案例 ，做為 ELK 的核心，Elasticsearch 能集中儲存資料以便於做快速搜尋，並做關聯性的微調，及能輕易擴展的分析功能。如此強大的性能使 Elasticsearch 在用戶中獲得很高的評價跟人氣，公司也因此聲名大噪 。\
