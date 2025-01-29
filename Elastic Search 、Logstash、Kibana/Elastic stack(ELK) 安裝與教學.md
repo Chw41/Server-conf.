@@ -162,6 +162,8 @@ cd kibana-8.12.0\bin
 > [!IMPORTANT]
 :bulb: 完成後，在Kibana介面上建立index-pattern & 視覺化
 
+# [[ETC.] 使用 docker 一鍵安裝 Elastic stack(ELK)](https://github.com/Chw41/Server-conf./blob/main/Elastic%20Search%20%E3%80%81Logstash%E3%80%81Kibana/Elastic%20stack(ELK)%20%E5%AE%89%E8%A3%9D%20on%20docker.md)
+
 # 設定區網固定 IP
 >[!Note]
 >Environment: 在 Mac 使用 Wireguard
