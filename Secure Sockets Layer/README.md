@@ -5,13 +5,8 @@ disqus: hackmd
 Apache SSL 憑證申請安裝
 ===
 
-## Table of Contents
-
-[TOC]
-
 >[!Tip]
-> 建立私鑰RSA 2048 、 產生憑證請求檔(CSR)、
-
+> 建立私鑰 RSA 2048 、 產生憑證請求檔(CSR)、完成申請安裝
 
 # 建立私鑰 Server.key
 
@@ -39,19 +34,19 @@ find /-name openssl -print #找出工具安裝位置
 ```command
 openssl version
 ```
-> 建議使用ver.1.0.2beta之後版本，1.0.1~1.0.2受到Heartbleed Bug 影響
+> 建議使用 ver.1.0.2beta 之後版本，1.0.1~1.0.2 受到 Heartbleed Bug 影響
 
 ## 建立Server.key 私鑰檔案
 ### 1. 產生RSA 私鑰
 ```command
 openssl genrsa -des3 -out server.key 2048
 ```
-> `genrsa`: 表示產生RSA 金鑰的操作\
-> `-des3`: 表示使用3DES 加密演算法對產生的私密金鑰進行加密，並要求使用者輸入密碼來保護私密金鑰\
+> `genrsa`: 表示產生 RSA 金鑰的操作\
+> `-des3`: 表示使用 3DES 加密演算法對產生的私密金鑰進行加密，並要求使用者輸入密碼來保護私密金鑰\
 > `-out server.key`: 指定產生的私鑰的輸出檔名為 server.key\
-> `2048`: 指定產生的RSA 金鑰的長度為2048 位元。 #國際密碼學規範需使用2048bits以上金鑰
+> `2048`: 指定產生的RSA 金鑰的長度為 2048 位元。 #國際密碼學規範需使用2048bits以上金鑰
 
-OpenSSL 會產生一個有密碼保護的RSA 私鑰檔案`server.key`，並使用3DES 演算法對私鑰進行加密。產生金鑰後會要求輸入密碼(PEM pass phase)
+OpenSSL 會產生一個有密碼保護的 RSA 私鑰檔案`server.key`，並使用 3DES 演算法對私鑰進行加密。產生金鑰後會要求輸入密碼(PEM pass phase)
 ```command
 Enter PEM pass phrase:
 Verifying password - Enter PEM pass phrase:
@@ -61,18 +56,18 @@ Verifying password - Enter PEM pass phrase:
 
 
 ### 2. 產生憑證請求檔(CSR)
-憑證請求檔(CSR)通常會發送給證書頒發機構(CA) 以獲取相應的數位證書，以便在伺服器上使用HTTPS 等安全協定。
+憑證請求檔(CSR)通常會發送給證書頒發機構(CA) 以獲取相應的數位證書，以便在伺服器上使用 HTTPS 等安全協定。
 ```command
 openssl req -new -key server.key -out certrequest.txt
 ```
 > `openssl`: OpenSSL 工具的命令列工具。\
 `req`: 表示產生憑證簽發要求的操作。\
 `-new`: 表示建立一個新的憑證要求。\
-`-key server.key`: 指定私鑰檔案server.key用於產生憑證請求。\
-`-out certrequest.txt`: 指定產生的憑證要求的輸出檔案名稱certrequest.txt。
+`-key server.key`: 指定私鑰檔案 server.key 用於產生憑證請求。\
+`-out certrequest.txt`: 指定產生的憑證要求的輸出檔案名稱 certrequest.txt。
 
 產出過程中需要進行身分驗證:
-```commad
+```
 Country Name (2 letter code) [AU]: 國家名稱 (ex.TW)
 State or Province Name (full name) [Some-State]: 州或省的名稱 (ex.Taiwan)
 Locality Name (eg, city) []: 城市名稱 (ex.Taipei)
@@ -87,7 +82,7 @@ A challenge password []: 若不需要按Enter
 An optional company name []: 若不需要按Enter
 ```
 
-3. 查看RSA 內容
+3. 查看 RSA 內容
 ```command
 openssl req -noout -text -in certrequest.txt
 ```
@@ -115,15 +110,15 @@ Reference: https://publicca.hinet.net/documents.htm
 
 # 根憑證/中繼憑證 安裝設定 
 >[!Note]
-> 在取得CA認證的Public CA 簽發憑證後
+> 在取得 CA 認證的 Public CA 簽發憑證後
 
-## 取得eCA自簽憑證 (根憑證 ROOTeCA)
+## 取得 eCA自簽憑證 (根憑證 ROOTeCA)
 
 中華電信公開金鑰基礎建設:\ [中華電信自簽憑證](http://epki.com.tw/download/ROOTeCA_64.crt)
 
 ![image](https://hackmd.io/_uploads/ry6ECO6pa.png)
 
-## 取得Public CA 憑證鏈 (中繼CA憑證)
+## 取得 Public CA 憑證鏈 (中繼CA憑證)
 中華電信公開金鑰基礎建設: [中華電信自身通用憑證](http://epki.com.tw/download/PublicCA2_64.crt)\
 ![image](https://hackmd.io/_uploads/H1b4ktpaa.png)
 
@@ -154,22 +149,22 @@ Reference: https://publicca.hinet.net/documents.htm
 
 ## Apache 憑證匯入 & 設定
 
-### 1. 將已匯出的.P7B 匯入Apache
-將完成匯出的.P7B 複製到 Apache Server 
+### 1. 將已匯出的 .P7B 匯入Apache
+將完成匯出的 .P7B 複製到 Apache Server 
 > :spiral_note_pad: 使用FTP需要以Binary格式傳輸
 
 ### 2. Apache console
 #### 2.1 格式轉換
-原憑證(.P7B檔)為DER encode，需要轉換成PEM encode (Base64)
+原憑證(.P7B檔)為 DER encode，需要轉換成 PEM encode (Base64)
 ```command
 openssl pkcs7 -in eCA_PublicCA.p7b -inform DER -print_certs -out eCA_PublicCA.pem
 ```
 > `openssl`: OpenSSL 工具的命令列工具。\
-`pkcs7`: 表示PKCS#7 相關操作。\
-`-in eCA_PublicCA.p7b`: 指定輸入的PKCS#7 檔案名為eCA_PublicCA.p7A。\
-`-inform DER`: 指定輸入檔的格式為DER 格式。PKCS#7 檔案可以以DER 或PEM 格式儲存。\
-`-print_certs`: 指示輸出列印PKCS#7 檔案中所包含的憑證。\
-`-out eCA_PublicCA.pem`: 指定輸出檔案的檔案名為eCA_PublicCA.pem，並將憑證以PEM 格式儲存。
+`pkcs7`: 表示 PKCS#7 相關操作。\
+`-in eCA_PublicCA.p7b`: 指定輸入的PKCS#7 檔案名為 eCA_PublicCA.p7A。\
+`-inform DER`: 指定輸入檔的格式為 DER 格式。PKCS#7 檔案可以以 DER 或 PEM 格式儲存。\
+`-print_certs`: 指示輸出列印 PKCS#7 檔案中所包含的憑證。\
+`-out eCA_PublicCA.pem`: 指定輸出檔案的檔案名為 eCA_PublicCA.pem，並將憑證以 PEM 格式儲存。
 
 ![image](https://hackmd.io/_uploads/SJcadKp6T.png)
 
@@ -183,7 +178,7 @@ cp eCA_PublicCA.pem C:\xampp\apache\conf\ssl.crt\ca.crt
 copy eCA_PublicCA.pem C:\xampp\apache\conf\ssl.crt\ca.crt
 ```
 
-> :diamond_shape_with_a_dot_inside: C:\xampp\apache\conf\ssl.crt 依照自己Apache不同環境選擇不同資料夾
+> :diamond_shape_with_a_dot_inside: C:\xampp\apache\conf\ssl.crt 依照自己 Apache 不同環境選擇不同資料夾
 
 ### 3 編輯 ssl.conf 中的 SSLCertificateChainFile
 編輯 httpd-ssl.conf 設定檔
@@ -191,7 +186,7 @@ copy eCA_PublicCA.pem C:\xampp\apache\conf\ssl.crt\ca.crt
 vi ~apache/conf/extra/httpd-ssl.conf
 ```
 httpd-ssl 會根據不同環境存在不同的資料夾中
-(大多都在apache\conf 資料夾底下)
+(大多都在 apache\conf 資料夾底下)
 ```conf=158
 #   Server Certificate Chain:
 #   Point SSLCertificateChainFile at a file containing the
@@ -199,28 +194,28 @@ httpd-ssl 會根據不同環境存在不同的資料夾中
 #   certificate chain for the server certificate. Alternatively
 #   the referenced file can be the same as SSLCertificateFile "conf/ssl.crt/server.crt"
 #   certificate for convenience.
-SSLCertificateChainFile "/conf/ssl.crt/yougood-ca.crt"
+SSLCertificateChainFile "/conf/ssl.crt/{your CA.CRT file}"
 #上步驟申請的ca.crt
 ```
-> 將SSLCertificateChainFile取消註解，加入上步驟產出的CA.CRT路徑
+> 將 SSLCertificateChainFile 取消註解，加入上步驟產出的CA.CRT路徑
 
 # SSL伺服器憑證安裝
 ## 1. server.cer格式轉換
 >[!Warning]
->**若收到的CA簽發的cer檔為PEM encode，則可忽略此步驟1。**\
->驗證方式: 使用文字編輯器開啟cer檔\
+>**若收到的 CA 簽發的 cer 檔為 PEM encode，則可忽略此步驟1。**\
+>驗證方式: 使用文字編輯器開啟 cer 檔\
 >1.顯示亂碼: DER encode\
->2.顯示BEGIN CERTIFICATE開頭: PEM encode
+>2.顯示 BEGIN CERTIFICATE 開頭: PEM encode
 
-原憑證(.cer)為DER encode，需要轉換成PEM encode (Base64)
+原憑證(.cer)為 DER encode，需要轉換成 PEM encode (Base64)
 ```command
 openssl x509 -in server.cer -inform DER -out server.pem
 ```
 > `openssl`: OpenSSL 工具的命令列工具。\
-`x509`: 表示X.509 相關操作。\
-`-in server.cer`: 指定輸入的X.509 憑證檔案名稱server.cer。\
-`-inform DER`: 指定輸入檔的格式為DER 編碼。X.509 憑證可以以DER 或PEM 格式儲存。\
-`-out server.pem`: 指定輸出檔案的檔案名為server.pem，並將憑證以PEM 格式儲存。
+`x509`: 表示 X.509 相關操作。\
+`-in server.cer`: 指定輸入的 X.509 憑證檔案名稱s erver.cer。\
+`-inform DER`: 指定輸入檔的格式為 DER 編碼。X.509 憑證可以以 DER 或 PEM 格式儲存。\
+`-out server.pem`: 指定輸出檔案的檔案名為 server.pem，並將憑證以 PEM 格式儲存。
 
 ## 2. 將產出的.cer/.PEM 憑證移置/apache/conf/ssl.crt
 ● Linux (.cer):
@@ -240,7 +235,7 @@ cp server.pem C:\xampp\apache\conf\ssl.crt\server.crt
 copy server.pem C:\xampp\apache\conf\ssl.crt\server.crt
 ```
 
-> :diamond_shape_with_a_dot_inside: C:\xampp\apache\conf\ssl.crt 依照自己Apache不同環境選擇不同資料夾
+> :diamond_shape_with_a_dot_inside: C:\xampp\apache\conf\ssl.crt 依照自己 Apache 不同環境選擇不同資料夾
 
 ![image](https://hackmd.io/_uploads/rkeXa5TTT.png)
 
@@ -251,7 +246,7 @@ copy server.pem C:\xampp\apache\conf\ssl.crt\server.crt
 vi ~apache/conf/extra/httpd-ssl.conf
 ```
 httpd-ssl 會根據不同環境存在不同的資料夾中
-(大多都在apache\conf 資料夾底下)
+(大多都在 apache\conf 資料夾底下)
 ```conf=134
 #   Server Certificate:
 #   Point SSLCertificateFile "conf/ssl.crt/server.crt"
@@ -263,22 +258,22 @@ httpd-ssl 會根據不同環境存在不同的資料夾中
 #   Some ECC cipher suites (http://www.ietf.org/rfc/rfc4492.txt)
 #   require an ECC certificate which can also be configured in
 #   parallel.
-SSLCertificateFile "conf/ssl.crt/yougood-server.crt" 
+SSLCertificateFile "conf/ssl.crt/{your CRT file}" 
 #上步驟申請的server.crt
 #SSLCertificateFile "conf/ssl.crt/server.crt"
 ```
-> 將SSLCertificateFile編輯成上步驟產出的SERVER.CRT路徑
+> 將 SSLCertificateFile 編輯成上步驟產出的 SERVER.CRT 路徑
 
 ### 3.1 編輯 ssl.conf 中的 SSLCertificateKeyFile
  >[!Note]
-將步驟 [**1. 產生RSA 私鑰**](#1-%E7%94%A2%E7%94%9Frsa-%E7%A7%81%E9%91%B0) 產生的server.key複製到/apache/conf/ssl.key下
+將步驟 [**1. 產生RSA 私鑰**](#1-%E7%94%A2%E7%94%9Frsa-%E7%A7%81%E9%91%B0) 產生的 server.key 複製到 /apache/conf/ssl.key 下
 
 編輯 httpd-ssl.conf 設定檔
 ```command
 vi ~apache/conf/extra/httpd-ssl.conf
 ```
 httpd-ssl 會根據不同環境存在不同的資料夾中
-(大多都在apache\conf 資料夾底下)
+(大多都在 apache\conf 資料夾底下)
 ```conf=148
 #   Server Private Key:
 #   If the key is not combined with the certificate, use this
@@ -286,29 +281,29 @@ httpd-ssl 會根據不同環境存在不同的資料夾中
 #   you've both a RSA and a DSA private key you can configure
 #   both in parallel (to also allow the use of DSA ciphers, etc.)
 #   ECC keys, when in use, can also be configured in parallel
-SSLCertificateKeyFile "conf/ssl.key/yougood-server.key"
+SSLCertificateKeyFile "conf/ssl.key/{your Private key}"
 #SSLCertificateKeyFile "conf/ssl.key/server.key"
 #SSLCertificateKeyFile "conf/ssl.key/server.key"
 ```
 > 將SSLCertificateKeyFile 編輯成匯入的SERVER.KEY路徑
 
 >[!Caution]
->若伺服器無法重啟遇到以下相關ERROR，無法重啟:\
-AH02577: Init: SSLPassPhraseDialog builtin is not supported on Win32 (key file C:/xampp/apache/conf/ssl.key/yougood-server.key)
-AH02311: Fatal error initialising mod_ssl, exiting. See C:/xampp/apache/logs/error.log for more information
-AH02564: Failed to configure encrypted (?) private key www.example.com:443:0, check C:/xampp/apache/conf/ssl.key/yougood-server.key
-SSL Library Error: error:04800068:PEM routines::bad password read -- You entered an incorrect pass phrase!?
-SSL Library Error: error:1E08010C:DECODER routines::unsupported (No supported data to decode.  Input type: DER, Input structure: type-specific)
-SSL Library Error: error:068000A8:asn1 encoding routines::wrong tag
-SSL Library Error: error:0688010A:asn1 encoding routines::nested asn1 error
-SSL Library Error: error:0688010A:asn1 encoding routines::nested asn1 error (Field=version, Type=RSAPrivateKey)
-SSL Library Error: error:0688010A:asn1 encoding routines::nested asn1 error (Field=version, Type=PKCS8_PRIV_KEY_INFO)
-SSL Library Error: error:1E08010C:DECODER routines::unsupported (No supported data to decode.  Input type: DER, Input structure: type-specific)
-SSL Library Error: error:0688010A:asn1 encoding routines::nested asn1 error (Type=RSAPrivateKey)
+>若伺服器無法重啟遇到以下相關 ERROR，無法重啟:\
+AH02577: Init: SSLPassPhraseDialog builtin is not supported on Win32 (key file C:/xampp/apache/conf/ssl.key/{your Private key})\
+AH02311: Fatal error initialising mod_ssl, exiting. See C:/xampp/apache/logs/error.log for more information\
+AH02564: Failed to configure encrypted (?) private key www.example.com:443:0, check C:/xampp/apache/conf/ssl.key/{your Private key}\
+SSL Library Error: error:04800068:PEM routines::bad password read -- You entered an incorrect pass phrase!?\
+SSL Library Error: error:1E08010C:DECODER routines::unsupported (No supported data to decode.  Input type: DER, Input structure: type-specific)\
+SSL Library Error: error:068000A8:asn1 encoding routines::wrong tag\
+SSL Library Error: error:0688010A:asn1 encoding routines::nested asn1 error\
+SSL Library Error: error:0688010A:asn1 encoding routines::nested asn1 error (Field=version, Type=RSAPrivateKey)\
+SSL Library Error: error:0688010A:asn1 encoding routines::nested asn1 error (Field=version, Type=PKCS8_PRIV_KEY_INFO)\
+SSL Library Error: error:1E08010C:DECODER routines::unsupported (No supported data to decode.  Input type: DER, Input structure: type-specific)\
+SSL Library Error: error:0688010A:asn1 encoding routines::nested asn1 error (Type=RSAPrivateKey)\
 SSL Library Error: error:0688010A:asn1 encoding routines::nested asn1 error (Type=PKCS8_PRIV_KEY_INFO) 
 
-可能是 SSL 金鑰格式錯誤。先確保SSL金鑰檔案是正確的PEM 格式，並且密碼pass phrase正確。
-可使用以下command，轉換key格式 (DER > PEM)
+可能是 SSL 金鑰格式錯誤。先確保 SSL 金鑰檔案是正確的 PEM 格式，並且密碼 pass phrase 正確。
+可使用以下 command，轉換 key 格式 (DER > PEM)
 ```
 openssl rsa -inform DER -outform PEM -in C:/xampp/apache/conf/ssl.key/server.key -out C:/xampp/apache/conf/ssl.key/server.pem
 ```
@@ -323,5 +318,12 @@ openssl rsa -inform DER -outform PEM -in C:/xampp/apache/conf/ssl.key/server.key
 重啟後瀏覽伺服器，確認完成SSL安裝
 :::
 ![image](https://hackmd.io/_uploads/HJSct6pTa.png)
+
+>[!Note]
+> 若憑證過期需更換，請參考：
+> [Apache SSL 憑證更換](https://hackmd.io/@CHW/BydUIe5Fke)
+
+# [Apache SSL 憑證更換](https://hackmd.io/@CHW/BydUIe5Fke)
+
 
 ###### tags: `Apache` `SSL` `TLS`
