@@ -321,9 +321,9 @@ openssl rsa -inform DER -outform PEM -in C:/xampp/apache/conf/ssl.key/server.key
 
 >[!Note]
 > 若憑證過期需更換，請參考：
-> [Apache SSL 憑證更換](https://hackmd.io/@CHW/BydUIe5Fke)
+> [Apache SSL 憑證更換](https://github.com/Chw41/Server-conf./blob/main/Secure%20Sockets%20Layer/Apache%20SSL%20%E6%86%91%E8%AD%89%E6%9B%B4%E6%8F%9B.md)
 
-# [Apache SSL 憑證更換](https://hackmd.io/@CHW/BydUIe5Fke)
+# [Apache SSL 憑證更換](https://github.com/Chw41/Server-conf./blob/main/Secure%20Sockets%20Layer/Apache%20SSL%20%E6%86%91%E8%AD%89%E6%9B%B4%E6%8F%9B.md)
 
 
 ###### tags: `Apache` `SSL` `TLS`
