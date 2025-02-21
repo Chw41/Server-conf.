@@ -5,18 +5,23 @@ disqus: hackmd
 Apache SSL 憑證更換
 ===
 
+## Table of Contents
+
+[TOC]
+
 >[!Note]
 > SSL憑證具時效性，本篇只介紹如何更換
-> 若是新服務申請憑證，可以參考 [Apache SSL 憑證申請安裝](https://github.com/Chw41/Server-conf./tree/main/Secure%20Sockets%20Layer)
+> 若是新服務申請憑證，可以參考 [Apache SSL 憑證申請安裝](https://hackmd.io/@CHW/Skyhc1v6T)
 
-# [Apache SSL 憑證申請安裝](https://github.com/Chw41/Server-conf./tree/main/Secure%20Sockets%20Layer) 
+# [Apache SSL 憑證申請安裝](https://hackmd.io/@CHW/Skyhc1v6T) 
 
-# 原本的私鑰 (server.key) 產生新的 CSR
+# 向憑證頒發機構 (CA) 購買新的SSL憑證 
+## 原本的私鑰 (server.key) 產生新的 CSR
 如果更換憑證，通常需要重新生成 CSR ，並提供給 憑證頒發機構 (CA) 來取得新的憑證。\
 私鑰位置 (`C:\xampp\apache\conf\ssl.key\{private.key}`)，
 
 >[!Tip]
->若以上路徑沒有，也可以到 `C:\xampp\apache\conf\extra\httpd->ssl.conf`中看設定檔：\
+>若以上路徑沒有，也可以到 `C:\xampp\apache\conf\extra\httpd\ssl.conf`中看設定檔：\
 >`SSLCertificateKeyFile "{Private key path}"`
 
 ```
@@ -24,7 +29,7 @@ openssl req -new -key {private.key} -out certrequest.csr
 ```
 > 將 private key 生成 CSR，重新提供給憑證頒發機構 (CA)
 
-# CSR 提交給憑證頒發機構 (CA)
+## CSR 提交給憑證頒發機構 (CA)
 以中華電信為例:\
 ![image](https://hackmd.io/_uploads/HJMj6ZcY1l.png)
 
@@ -37,11 +42,12 @@ PS C:\xampp\htdocs\.well-known\pki-validation> type .\DN_CHECK_FILE.htm
 {"randomNumber":"{randomNumber}","expireTime":"2025-02-30T10:39:43"}
 ```
 ## 驗證 TXT tag 設定狀態
+
 ### 1. [digwebinterface](https://www.digwebinterface.com/?hostnames=XXXXX&type=TXT&useresolver=8.8.4.4&ns=auth&nameservers): 線上 DNS 查詢工具
-* DNS 記錄查詢：支援 `A`、`AAAA`、`CNAME`、`MX`、`NS`、`TXT`、`SOA`、`PTR` 多種 record 類型。
-* 跨伺服器查詢：可選擇不同的 DNS Server（如 Google DNS、Cloudflare DNS、OpenDNS）進行比對。
-* 反向解析：查詢 IP address 對應的 domain（PTR record）。
-* 故障診斷: DNS 解析問題
+- DNS 記錄查詢：支援 `A`、`AAAA`、`CNAME`、`MX`、`NS`、`TXT`、`SOA`、`PTR` 多種 record 類型。
+- 跨伺服器查詢：可選擇不同的 DNS Server（如 Google DNS、Cloudflare DNS、OpenDNS）進行比對。
+- 反向解析：查詢 IP address 對應的 domain（PTR record）。
+- 故障診斷: DNS 解析問題
 
 ![image](https://hackmd.io/_uploads/Bk0ZpV79kg.png)
 
@@ -212,16 +218,110 @@ google.com.             56      IN      SOA     ns1.google.com. dns-admin.google
 chw@CHW:$
 ```
 > `TXT`：查詢 TXT 記錄（常用於 SPF、DKIM、DMARC、驗證碼等）\
-`+noadditional`：不顯示額外資訊（額外的 DNS record)\
+`+noadditional`：不顯示額外資訊（如額外的 DNS 記錄）\
 `+noquestion`：不顯示 QUESTION SECTION 部分\
 `+nocomments`：不顯示註解文字\
 `+nocmd`：不顯示查詢命令\
 `+nostats`：不顯示查詢統計資訊（省略查詢時間、伺服器等資訊）。
 
-
-# 持續等待中...
+# 取得 CA 核發 SSL 憑證
 >[!Caution]
 > 在取得 CA 認證的 Public CA 簽發憑證後
+
+中華電信TLS憑證服務於 2024 年 11 月切換新根憑證CA: [憑證串鏈更新說明](https://chtca.hinet.net/newcatinfo.html)
+
+>[!Note]
+>CA 認證後，會取得四個憑證串鏈檔:
+>1. 舊根憑證 (eCA自簽憑證，檔名: `ROOTeCA_64.crt`)
+>2. 中繼轉接憑證(舊簽新根憑證，檔名: `eCA1-to-HRCA1.crt`)
+>3. 中繼CA憑證（HiPKI OVCA自身憑證，檔名: `OVTLSCA1_b64.crt.crt`)
+>4. 簽發給用戶的TLS伺服器軟體憑證 `{file}.cer`
+
+# 根憑證/中繼憑證 安裝設定 
+## 1. 取得 eCA自簽憑證 (根憑證 ROOTeCA)
+中華電信公開金鑰基礎建設: [中華電信 eCA 憑證](https://eca.hinet.net/download/ROOTeCA_64.crt)\
+![image](https://hackmd.io/_uploads/Bk4WIgIqJl.png)
+
+
+## 2. 取得 eCA to HRCA 憑證鏈
+中華電信公開金鑰基礎建設: [中華電信 eCA to HRCA 憑證](https://eca.hinet.net/download/eCA1-to-HRCA1.crt)\
+![image](https://hackmd.io/_uploads/ByinUl85ye.png)
+
+## 3. 取得 HiPKI OV TLS CA 憑證鏈
+中華電信公開金鑰基礎建設: [中華電信 HiPKI OV TLS CA 憑證](https://eca.hinet.net/repository-h/download/OVTLSCA1_b64.crt)\
+![image](https://hackmd.io/_uploads/Hk_Uvl8qJe.png)
+
+## 4. 製作憑證鏈
+(Windows WSL2)
+```
+$ cat OVTLSCA1_b64.crt eCA1-to-HRCA1.crt > server-ca.crt
+```
+
+# SSL伺服器憑證安裝
+將 `server.key`、`server-ca.crt`、SSL 伺服器憑證(檔名: `{file}.cer`)移到特定資料夾
+> :diamond_shape_with_a_dot_inside: `C:\xampp\apache\conf\ssl.*\` 依照自己 Apache 不同環境選擇不同資料夾
+
+## 1. 將 SSL 伺服器憑證 .cer 憑證轉換成 ssl.crt
+● Linux (.cer):
+```command
+cp {file}.cer server.crt
+```
+● Windows (.cer):
+```command
+copy {file}.cer server.crt
+```
+
+## 2. 編輯 ssl.conf
+httpd-ssl 會根據不同環境存在不同的資料夾中 (大多都在 apache\conf 資料夾底下)
+```
+vi /xampp/apache/conf/extra/httpd-ssl.conf
+```
+分別編輯 `SSLCertificateFile`, `SSLCertificateKeyFile` & `SSLCertificateChainFile` (詳細步驟可參考 [Apache SSL 憑證申請安裝](https://hackmd.io/@CHW/Skyhc1v6T#3-%E7%B7%A8%E8%BC%AF-sslconf))
+
+httpd-ssl.conf:
+```
+...
+SSLCertificateFile "conf/ssl.crt/server.crt"
+...
+SSLCertificateKeyFile "conf/ssl.key/server.key"
+...
+SSLCertificateChainFile "/conf/ssl.crt/server-ca.crt"
+...
+```
+>[!Caution]
+若伺服器無法重啟遇到以下相關ERROR，無法重啟:\
+AH02577: Init: SSLPassPhraseDialog builtin is not supported on Win32 (key file C:/xampp/apache/conf/ssl.key/{your Private key})\
+AH02311: Fatal error initialising mod_ssl, exiting. See C:/xampp/apache/logs/error.log for more information\
+AH02564: Failed to configure encrypted (?) private key www.example.com:443:0, check C:/xampp/apache/conf/ssl.key/{your Private key}\
+SSL Library Error: error:04800068:PEM routines::bad password read -- You entered an incorrect pass phrase!?\
+SSL Library Error: error:1E08010C:DECODER routines::unsupported (No supported data to decode.  Input type: DER, Input structure: type-specific)\
+SSL Library Error: error:068000A8:asn1 encoding routines::wrong tag\
+SSL Library Error: error:0688010A:asn1 encoding routines::nested asn1 error\
+SSL Library Error: error:0688010A:asn1 encoding routines::nested asn1 error (Field=version, Type=RSAPrivateKey)\
+SSL Library Error: error:0688010A:asn1 encoding routines::nested asn1 error (Field=version, Type=PKCS8_PRIV_KEY_INFO)\
+SSL Library Error: error:1E08010C:DECODER routines::unsupported (No supported data to decode.  Input type: DER, Input structure: type-specific)\
+SSL Library Error: error:0688010A:asn1 encoding routines::nested asn1 error (Type=RSAPrivateKey)\
+SSL Library Error: error:0688010A:asn1 encoding routines::nested asn1 error (Type=PKCS8_PRIV_KEY_INFO)  
+
+
+可能是 SSL 金鑰格式錯誤。先確保 SSL 金鑰檔案是正確的 PEM 格式，並且密碼 pass phrase 正確。
+可使用以下 command，轉換 key 格式 (CER > PEM)
+```
+openssl x509 -in server.cer -inform DER -out server.pem
+```
+
+# 重啟 Apache (完成安裝)
+```command
+/apache/bin/apachectl stop
+/apache/bin/apachectl start
+```
+:ballot_box_with_check: 確認伺服器&防火牆有開啟對應的 HTTPS PORT (443)
+
+>[!Important]
+重啟後瀏覽伺服器，確認完成SSL安裝
+
+![image](https://hackmd.io/_uploads/ryPLhbL5kl.png)
+
 
 
 ###### tags: `Apache` `SSL` `TLS`
