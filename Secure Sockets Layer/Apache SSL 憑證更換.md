@@ -5,10 +5,6 @@ disqus: hackmd
 Apache SSL 憑證更換
 ===
 
-## Table of Contents
-
-[TOC]
-
 >[!Note]
 > SSL憑證具時效性，本篇只介紹如何更換
 > 若是新服務申請憑證，可以參考 [Apache SSL 憑證申請安裝](https://hackmd.io/@CHW/Skyhc1v6T)
